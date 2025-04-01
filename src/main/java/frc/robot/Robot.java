@@ -33,6 +33,7 @@ public class Robot extends TimedRobot {
     put("determination", "Determination");
     put("downunder", "Down Under");
     put("drunkensailor", "Drunken Sailor");
+    put("icecream", "Ice Cream Song");
     put("megalovania", "Megalovania");
     put("miichannel", "Mii Channel");
     put("nevergonnagiveyouup", "Never Gonna Give You Up");
