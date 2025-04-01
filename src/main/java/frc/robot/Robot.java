@@ -4,7 +4,13 @@
 
 package frc.robot;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.function.Consumer;
+
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
@@ -14,8 +20,26 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
 
-  private final RobotContainer m_robotContainer;
+  private final RobotContainer robotContainer;
+  private static final String defaultSong = "allstar";
+  private final SendableChooser<String> songChooser = new SendableChooser<>();
 
+  private static final HashMap<String, String> fancyNames = new HashMap<>() {{
+    put("africa", "Africa");
+    put("allstar", "All Star");
+    put("bigshot", "BIG SHOT");
+    put("bonetrousle", "Bonetrousle");
+    put("deathbyglamour", "Death By Glamour");
+    put("determination", "Determination");
+    put("downunder", "Down Under");
+    put("drunkensailor", "Drunken Sailor");
+    put("megalovania", "Megalovania");
+    put("miichannel", "Mii Channel");
+    put("nevergonnagiveyouup", "Never Gonna Give You Up");
+    put("piratesofthecaribbean", "Pirates of the Caribbean");
+    put("rudebuster", "Rude Buster");
+    put("spearofjustice", "Spear of Justice");
+  }};
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -23,7 +47,27 @@ public class Robot extends TimedRobot {
   public Robot() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    m_robotContainer = new RobotContainer();
+    robotContainer = new RobotContainer();
+
+    songChooser.setDefaultOption(fancyNames.get(defaultSong), defaultSong);
+
+    File[] chirpFiles = robotContainer.getOrchestraSubsystem().getChirpFiles();
+    for (int i = 0; i < chirpFiles.length; i++) {
+      String fileName = chirpFiles[i].getName().replace(".chrp", "");
+      String fancyName = fancyNames.getOrDefault(fileName, fileName);
+      if (fileName != defaultSong) songChooser.addOption(fancyName, fileName);
+    }
+
+    SmartDashboard.putData("Songs", songChooser);
+
+    songChooser.onChange(new Consumer<String>() {
+      @Override
+      public void accept(String file) {
+        System.out.println("Loading Chirp file: " + file);
+        robotContainer.getOrchestraSubsystem().loadChirpFile(file);
+      }
+      
+    });
   }
 
   /**
@@ -49,13 +93,18 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {}
 
-  /** This function is called periodically during autonomous. */
+
+  @Override
+  public void autonomousInit() {
+    robotContainer.getOrchestraSubsystem().play();
+  }
+
   @Override
   public void autonomousPeriodic() {}
 
   @Override
   public void teleopInit() {
-    m_robotContainer.getOrchestraSubsystem().play();;
+    
   }
 
   /** This function is called periodically during operator control. */

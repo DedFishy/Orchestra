@@ -4,8 +4,13 @@
 
 package frc.robot.subsystems;
 
+import java.io.File;
+
 import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class OrchestraSubsystem extends SubsystemBase {
@@ -41,7 +46,7 @@ public class OrchestraSubsystem extends SubsystemBase {
       orchestra.addInstrument(motor);
     }
 
-    orchestra.loadMusic("file.chrp");
+    orchestra.loadMusic("allstar.chrp");
 
   }
 
@@ -49,7 +54,19 @@ public class OrchestraSubsystem extends SubsystemBase {
   public void periodic() {
   }
 
+  public void loadChirpFile(String file) {
+    System.out.println(Filesystem.getDeployDirectory().getAbsolutePath() + "/" + file + ".chrp");
+    System.out.println(orchestra.loadMusic(Filesystem.getDeployDirectory().getAbsolutePath() + "/" + file + ".chrp"));
+  }
+
+  public File[] getChirpFiles() {
+    return Filesystem.getDeployDirectory().listFiles();
+  }
+
   public void play() {
-    orchestra.play();
+    System.out.println(orchestra);
+    System.out.println(orchestra.play());
+    
+    System.out.println("Playing is set to: " + orchestra.isPlaying());
   }
 }
